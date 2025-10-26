@@ -43,5 +43,6 @@ yarn-error.log*
 next-env.d.ts
 
 # uploaded images (sensitive - contain answers)
-/uploads/
+/uploads/*
+!uploads/.gitkeep
 /public/uploads/
