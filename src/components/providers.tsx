@@ -5,8 +5,7 @@ import { WagmiProvider } from "wagmi";
 import { config } from "@/lib/wagmi";
 import {
   RainbowKitProvider,
-  darkTheme,
-  lightTheme,
+  darkTheme
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -20,7 +19,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         <RainbowKitProvider
           modalSize="compact"
           theme={{
-            lightMode: lightTheme(),
+            lightMode: darkTheme(),
             darkMode: darkTheme(),
           }}
         >

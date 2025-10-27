@@ -355,8 +355,9 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      // Prevent default only for pinch zoom (2 fingers)
-      if (e.touches.length === 2) {
+      // Prevent default scroll when touching canvas
+      // This prevents page scroll while panning or pinching
+      if (touchCountRef.current > 0) {
         e.preventDefault();
       }
     };
@@ -564,8 +565,11 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-square touch-pan-y select-none overflow-hidden rounded-lg shadow ring-1 ring-black/10 bg-white dark:bg-zinc-900 dark:ring-white/10"
-      style={{ overscrollBehavior: 'contain' }}
+      className="relative w-full aspect-square touch-none select-none overflow-hidden rounded-lg shadow ring-1 ring-black/10 bg-white dark:bg-zinc-900 dark:ring-white/10"
+      style={{ 
+        overscrollBehavior: 'none',
+        touchAction: 'none'
+      }}
       onWheel={(e) => {
         // Note: preventDefault is handled in useEffect with { passive: false }
         e.stopPropagation();
