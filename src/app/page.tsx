@@ -11,6 +11,7 @@ import WrongGuessModal from "@/components/WrongGuessModal";
 import TutorialModal from "@/components/TutorialModal";
 import { PIXPOT_CONTRACT_ABI, PIXPOT_CONTRACT_ADDRESS } from "@/lib/contract";
 import { keccak256, toHex } from "viem";
+import { sdk } from '@farcaster/miniapp-sdk';
 
 type HistoryImage = {
   id: number;
@@ -54,6 +55,10 @@ export default function Home() {
     answer: string;
     adminSecret: string;
   } | null>(null);
+
+  useEffect(() => {
+    sdk.actions.ready();
+  }, []);
 
   // Check if first visit
   useEffect(() => {

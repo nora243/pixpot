@@ -1,11 +1,7 @@
-"use client";
-
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/providers";
-import { sdk } from '@farcaster/miniapp-sdk';
-import { useEffect } from 'react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,14 +18,32 @@ const geistMono = Geist_Mono({
 //   description: "Reveal pixels, guess the image, win the pot — on Base",
 // };
 
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    other: {
+      'fc:miniapp': JSON.stringify({
+        version: 'next',
+        imageUrl: 'https://pixpot.fun/cover.png',
+        button: {
+          title: `Open PixPot`,
+          action: {
+            type: 'launch_miniapp',
+            name: 'PixPot',
+            url: 'https://pixpot.fun',
+            splashImageUrl: 'https://pixpot.fun/logo.png',
+            splashBackgroundColor: '#1E90FF',
+          },
+        },
+      }),
+    },
+  };
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  useEffect(() => {
-    sdk.actions.ready();
-  }, []);
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
