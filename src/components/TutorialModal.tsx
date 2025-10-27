@@ -12,27 +12,27 @@ type TutorialSlide = {
 const TUTORIAL_SLIDES: TutorialSlide[] = [
   {
     title: "1. Reveal Pixels",
-    description: "Click on hidden pixels to reveal parts of the image. Each pixel costs a small fee that goes into the prize pool.",
+    description: "Click on hidden pixels to reveal parts of the image. Each image is 128x128 pixels with 16,384 pixels total waiting to be discovered.",
     icon: "🎨",
   },
   {
-    title: "2. Guess the Answer",
-    description: "Think you know what the image is? Submit your guess! Use the commit-reveal system to prevent front-running.",
+    title: "2. Make Your Guess",
+    description: "Think you know what the image is? Submit your guess! Your entry fee (0.0001 ETH) adds to the growing prize pool.",
     icon: "🤔",
   },
   {
-    title: "3. Win Big Prizes",
-    description: "Correct guess wins 70% of the pool! Players who revealed pixels share 30% based on their contribution.",
+    title: "3. Win Big Rewards",
+    description: "Correct guessers win 70% of the prize pool! Players who revealed pixels share the remaining 30% based on their contributions.",
     icon: "🏆",
   },
   {
-    title: "4. Claim Your Rewards",
-    description: "Winners and pixel revealers can claim their prizes anytime from the Profile page. All rewards are secured on blockchain.",
+    title: "4. Claim Your Prizes",
+    description: "Winners and pixel contributors can claim their rewards anytime from the Profile page. All prizes are secured on the blockchain.",
     icon: "💰",
   },
   {
     title: "5. Connect Your Wallet",
-    description: "Click 'Connect Wallet' in the top-right corner to start playing. Make sure you're on Base mainnet!",
+    description: "Click 'Connect Wallet' in the top-right corner to start playing. Make sure you're connected to Base mainnet!",
     icon: "🔗",
   },
 ];
