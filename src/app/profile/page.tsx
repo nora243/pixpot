@@ -94,7 +94,7 @@ function Toast({ toast, onClose }: { toast: ToastMessage; onClose: () => void })
   return (
     <div className="fixed top-4 right-4 z-50 animate-slide-in-right">
       <div className={`relative p-[3px] rounded-xl bg-linear-to-br ${bgColors[toast.type]} shadow-lg shadow-${toast.type === 'success' ? 'green' : toast.type === 'error' ? 'red' : 'blue'}-500/30 min-w-[320px]`}>
-        <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+        <div className="rounded-[11px] bg-zinc-900 p-4">
           <div className="flex items-start gap-3">
             <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
               toast.type === 'success' ? 'bg-green-500' :
@@ -105,7 +105,7 @@ function Toast({ toast, onClose }: { toast: ToastMessage; onClose: () => void })
             </div>
             <div className="flex-1">
               <h4 className="font-bold text-sm mb-1">{toast.title}</h4>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">{toast.message}</p>
+              <p className="text-xs text-zinc-400">{toast.message}</p>
             </div>
             <button
               onClick={onClose}
@@ -289,10 +289,10 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
                   key={prize.onchain_game_id}
                   className="relative p-[3px] rounded-xl bg-linear-to-br from-yellow-500 via-orange-400 to-yellow-600 shadow-lg shadow-yellow-500/30"
                 >
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
                     <div className="text-center mb-3">
                       <div className="text-4xl mb-2">🏆</div>
-                      <div className="text-sm text-zinc-600 dark:text-zinc-400">Game #{prize.onchain_game_id}</div>
+                      <div className="text-sm text-zinc-400">Game #{prize.onchain_game_id}</div>
                     </div>
 
                     <SecureImage
@@ -303,15 +303,15 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
 
                     <div className="space-y-2 text-sm mb-4">
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Winner Prize:</span>
+                        <span className="text-zinc-400">Winner Prize:</span>
                         <span className="font-bold text-yellow-400">{prize.winnerAmount} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Total Pool:</span>
+                        <span className="text-zinc-400">Total Pool:</span>
                         <span className="font-medium text-cyan-400">{prize.poolAmount} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Status:</span>
+                        <span className="text-zinc-400">Status:</span>
                         <span className="font-medium text-yellow-400">⏳ Unclaimed</span>
                       </div>
                     </div>
@@ -344,10 +344,10 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
                   key={prize.onchain_game_id}
                   className="relative p-[3px] rounded-xl bg-linear-to-br from-green-500 via-emerald-400 to-green-600 shadow-lg shadow-green-500/20 opacity-75"
                 >
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
                     <div className="text-center mb-3">
                       <div className="text-4xl mb-2">✅</div>
-                      <div className="text-sm text-zinc-600 dark:text-zinc-400">Game #{prize.onchain_game_id}</div>
+                      <div className="text-sm text-zinc-400">Game #{prize.onchain_game_id}</div>
                     </div>
 
                     <SecureImage
@@ -358,15 +358,15 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
 
                     <div className="space-y-2 text-sm mb-4">
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Winner Prize:</span>
+                        <span className="text-zinc-400">Winner Prize:</span>
                         <span className="font-bold text-green-400">{prize.winnerAmount} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Total Pool:</span>
+                        <span className="text-zinc-400">Total Pool:</span>
                         <span className="font-medium text-cyan-400">{prize.poolAmount} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Status:</span>
+                        <span className="text-zinc-400">Status:</span>
                         <span className="font-medium text-green-400">✓ Claimed</span>
                       </div>
                     </div>
@@ -386,10 +386,10 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
         {/* No prizes */}
         {prizes.length === 0 && (
           <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-            <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-8 text-center">
+            <div className="rounded-[11px] bg-zinc-900 p-8 text-center">
               <div className="text-6xl mb-4">🏆</div>
               <h3 className="text-xl font-bold mb-2">No Prizes Yet</h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="text-zinc-400">
                 Win games to earn prizes!
               </p>
             </div>
@@ -616,10 +616,10 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
                   key={prize.onchain_game_id}
                   className="relative p-[3px] rounded-xl bg-linear-to-br from-cyan-500 via-blue-400 to-cyan-600 shadow-lg shadow-cyan-500/30"
                 >
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
                     <div className="text-center mb-3">
                       <div className="text-4xl mb-2">💎</div>
-                      <div className="text-sm text-zinc-600 dark:text-zinc-400">Game #{prize.onchain_game_id}</div>
+                      <div className="text-sm text-zinc-400">Game #{prize.onchain_game_id}</div>
                     </div>
 
                     <SecureImage
@@ -630,15 +630,15 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
 
                     <div className="space-y-2 text-sm mb-4">
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Your Reward:</span>
+                        <span className="text-zinc-400">Your Reward:</span>
                         <span className="font-bold text-cyan-400">{prize.revealerAmount} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Pixels Revealed:</span>
+                        <span className="text-zinc-400">Pixels Revealed:</span>
                         <span className="font-medium text-blue-400">{prize.userContribution}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Status:</span>
+                        <span className="text-zinc-400">Status:</span>
                         <span className="font-medium text-cyan-400">⏳ Ready</span>
                       </div>
                     </div>
@@ -671,10 +671,10 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
                   key={prize.onchain_game_id}
                   className="relative p-[3px] rounded-xl bg-linear-to-br from-orange-500 via-amber-400 to-orange-600 shadow-lg shadow-orange-500/20 opacity-75"
                 >
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
                     <div className="text-center mb-3">
                       <div className="text-4xl mb-2">⏳</div>
-                      <div className="text-sm text-zinc-600 dark:text-zinc-400">Game #{prize.onchain_game_id}</div>
+                      <div className="text-sm text-zinc-400">Game #{prize.onchain_game_id}</div>
                     </div>
 
                     <SecureImage
@@ -685,19 +685,19 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
 
                     <div className="space-y-2 text-sm mb-4">
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Pool Amount:</span>
+                        <span className="text-zinc-400">Pool Amount:</span>
                         <span className="font-bold text-purple-400">{prize.poolAmount} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Revealer Pool (30%):</span>
+                        <span className="text-zinc-400">Revealer Pool (30%):</span>
                         <span className="font-medium text-cyan-400">{(parseFloat(prize.poolAmount) * 0.3).toFixed(6)} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Pixels Revealed:</span>
+                        <span className="text-zinc-400">Pixels Revealed:</span>
                         <span className="font-medium text-blue-400">{prize.userContribution}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Status:</span>
+                        <span className="text-zinc-400">Status:</span>
                         <span className="font-medium text-orange-400">Pending</span>
                       </div>
                     </div>
@@ -723,10 +723,10 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
                   key={prize.onchain_game_id}
                   className="relative p-[3px] rounded-xl bg-linear-to-br from-green-500 via-emerald-400 to-green-600 shadow-lg shadow-green-500/20 opacity-75"
                 >
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
                     <div className="text-center mb-3">
                       <div className="text-4xl mb-2">✅</div>
-                      <div className="text-sm text-zinc-600 dark:text-zinc-400">Game #{prize.onchain_game_id}</div>
+                      <div className="text-sm text-zinc-400">Game #{prize.onchain_game_id}</div>
                     </div>
 
                     <SecureImage
@@ -737,11 +737,11 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
 
                     <div className="space-y-2 text-sm mb-4">
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Claimed:</span>
+                        <span className="text-zinc-400">Claimed:</span>
                         <span className="font-bold text-green-400">{prize.revealerAmount} ETH</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-600 dark:text-zinc-400">Pixels Revealed:</span>
+                        <span className="text-zinc-400">Pixels Revealed:</span>
                         <span className="font-medium text-blue-400">{prize.userContribution}</span>
                       </div>
                     </div>
@@ -761,10 +761,10 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
         {/* No prizes */}
         {prizes.length === 0 && (
           <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-            <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-8 text-center">
+            <div className="rounded-[11px] bg-zinc-900 p-8 text-center">
               <div className="text-6xl mb-4">💎</div>
               <h3 className="text-xl font-bold mb-2">No Revealer Prizes</h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="text-zinc-400">
                 Reveal pixels in games to earn rewards!
               </p>
             </div>
@@ -897,9 +897,9 @@ export default function ProfilePage() {
           <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
             <div className="text-center">
               <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20 inline-block">
-                <div className="rounded-[11px] bg-white dark:bg-zinc-900 px-8 py-12">
+                <div className="rounded-[11px] bg-zinc-900 px-8 py-12">
                   <h1 className="text-2xl font-bold mb-4"> Profile</h1>
-                  <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+                  <p className="text-zinc-400 mb-6">
                     Please connect your wallet to view your profile
                   </p>
                   <ConnectButton />
@@ -978,22 +978,22 @@ export default function ProfilePage() {
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total Pixels Revealed</div>
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
+                    <div className="text-sm text-zinc-400 mb-1">Total Pixels Revealed</div>
                     <div className="text-2xl font-bold text-blue-400">{stats?.totalPixelsRevealed || 0}</div>
                   </div>
                 </div>
 
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total Guesses</div>
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
+                    <div className="text-sm text-zinc-400 mb-1">Total Guesses</div>
                     <div className="text-2xl font-bold text-cyan-400">{stats?.totalGuesses || 0}</div>
                   </div>
                 </div>
 
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Correct Guesses</div>
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
+                    <div className="text-sm text-zinc-400 mb-1">Correct Guesses</div>
                     <div className="text-2xl font-bold text-green-400">
                       {stats?.correctGuesses || 0}
                       <span className="text-sm text-zinc-500 ml-2">
@@ -1004,29 +1004,29 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-yellow-500 via-orange-400 to-yellow-600 shadow-lg shadow-yellow-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Games Won</div>
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
+                    <div className="text-sm text-zinc-400 mb-1">Games Won</div>
                     <div className="text-2xl font-bold text-yellow-400">🏆 {stats?.gamesWon || 0}</div>
                   </div>
                 </div>
 
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-yellow-500 via-orange-400 to-yellow-600 shadow-lg shadow-yellow-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total Prizes Won</div>
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
+                    <div className="text-sm text-zinc-400 mb-1">Total Prizes Won</div>
                     <div className="text-xl font-bold text-yellow-400">{stats?.totalPrizesWon || "0"} ETH</div>
                   </div>
                 </div>
 
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-green-500 via-emerald-400 to-green-600 shadow-lg shadow-green-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Prizes Claimed</div>
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
+                    <div className="text-sm text-zinc-400 mb-1">Prizes Claimed</div>
                     <div className="text-xl font-bold text-green-400">{stats?.totalPrizesClaimed || "0"} ETH</div>
                   </div>
                 </div>
 
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-orange-500 via-amber-400 to-orange-600 shadow-lg shadow-orange-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Unclaimed Prizes</div>
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
+                    <div className="text-sm text-zinc-400 mb-1">Unclaimed Prizes</div>
                     <div className="text-xl font-bold text-orange-400">{stats?.totalPrizesUnclaimed || "0"} ETH</div>
                   </div>
                 </div>
@@ -1099,7 +1099,7 @@ export default function ProfilePage() {
                         key={img.id}
                         className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20"
                       >
-                        <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                        <div className="rounded-[11px] bg-zinc-900 p-4">
                           <SecureImage
                             filename={img.filename}
                             alt={img.original_name}
@@ -1107,7 +1107,7 @@ export default function ProfilePage() {
                           />
                           <div className="space-y-2 text-sm">
                             <div className="font-medium">
-                              <span className="text-zinc-600 dark:text-zinc-400">Status: </span>
+                              <span className="text-zinc-400">Status: </span>
                               <span className={
                                 img.status === 'completed' ? 'text-green-400' :
                                 img.status === 'active' ? 'text-blue-400' :
@@ -1122,10 +1122,10 @@ export default function ProfilePage() {
                                 ✓ Answer: {img.answer}
                               </div>
                             )}
-                            <div className="text-zinc-600 dark:text-zinc-400">
+                            <div className="text-zinc-400">
                               Your pixels: <span className="font-medium text-blue-400">{img.user_pixels}</span>
                             </div>
-                            <div className="text-zinc-600 dark:text-zinc-400">
+                            <div className="text-zinc-400">
                               Your guesses: <span className="font-medium text-cyan-400">{img.user_guesses}</span>
                               {img.user_correct_guesses > 0 && (
                                 <span className="text-green-400 ml-1">({img.user_correct_guesses} correct)</span>
@@ -1146,7 +1146,7 @@ export default function ProfilePage() {
 
               {activeTab === "guesses" && (
                 <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-                  <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                  <div className="rounded-[11px] bg-zinc-900 p-4">
                     {recentGuesses.length === 0 ? (
                       <div className="text-center py-12 text-zinc-400">
                         No guesses yet. Try guessing an answer!
@@ -1159,14 +1159,14 @@ export default function ProfilePage() {
                             className={`flex items-center justify-between p-3 rounded transition-colors ${
                               guess.is_correct
                                 ? "bg-green-100 dark:bg-green-900/20 border border-green-400/20"
-                                : "bg-zinc-100 dark:bg-zinc-800"
+                                : "bg-zinc-800"
                             }`}
                           >
                             <div className="flex-1">
                               <div className="font-medium text-sm">
                                 {guess.original_name}
                               </div>
-                              <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                              <div className="text-xs text-zinc-400 mt-1">
                                 Your guess: <span className="font-mono">{guess.guess_text}</span>
                                 {guess.is_correct ? (
                                   <span className="text-green-400 ml-2">✓ Correct!</span>

@@ -697,7 +697,7 @@ export default function Home() {
           {/* Sidebar - stacks below on mobile, side-by-side on desktop */}
           <aside className="w-full lg:w-80 flex flex-col gap-4 sm:gap-6">
             <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-              <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+              <div className="rounded-[11px] bg-zinc-900 p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold">Game stats</h2>
                   <button
@@ -708,10 +708,10 @@ export default function Home() {
                     📖 Guide
                   </button>
                 </div>
-                <div className="space-y-2 text-base text-zinc-600 dark:text-zinc-400">
+                <div className="space-y-2 text-base text-zinc-400">
                   <div className="flex justify-between">
                     <span>Opened pixels:</span>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-50">{openedCount}</span>
+                    <span className="font-medium text-zinc-50">{openedCount}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Grid:</span>
@@ -719,17 +719,17 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between">
                     <span>Participants:</span>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-50">{participantsCount}</span>
+                    <span className="font-medium text-zinc-50">{participantsCount}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Total guesses:</span>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-50">{guessesCount}</span>
+                    <span className="font-medium text-zinc-50">{guessesCount}</span>
                   </div>
                   
                   {/* Hints Section */}
                   {hints.length > 0 && (
-                    <div className="pt-3 border-t border-black/10 dark:border-white/10">
-                      <div className="font-medium text-zinc-900 dark:text-zinc-50 mb-2">💡 Hints:</div>
+                    <div className="pt-3 border-t border-white/10">
+                      <div className="font-medium text-zinc-50 mb-2">💡 Hints:</div>
                       <div className="space-y-2">
                         {hints.map((hint, index) => (
                           <div key={index} className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded px-2 py-1.5">
@@ -744,7 +744,7 @@ export default function Home() {
             </div>
 
             <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-              <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+              <div className="rounded-[11px] bg-zinc-900 p-4">
                 <h2 className="mb-3 text-lg font-semibold">Make a guess</h2>
                 <div className="mb-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                   <div className="text-xs text-blue-800 dark:text-blue-200 flex items-start gap-2">
@@ -762,7 +762,7 @@ export default function Home() {
                     value={guess}
                     onChange={(e) => setGuess(e.target.value)}
                     placeholder="What's in the image?"
-                    className="w-full rounded-md border border-black/10 bg-white px-3 py-2 text-base text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-50"
+                    className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-base text-zinc-50 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     disabled={commitBlockNumber !== null || pendingWinnerDeclaration !== null}
                   />
                   
@@ -882,7 +882,7 @@ export default function Home() {
                         setGuessSecret("");
                       }}
                       disabled={loadingGuess}
-                      className="w-full text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 underline transition-colors"
+                      className="w-full text-sm text-zinc-400 hover:text-zinc-200 underline transition-colors"
                     >
                       Skip and continue to next game
                     </button>
@@ -890,7 +890,7 @@ export default function Home() {
                 )}
                 
                 {guessResult && (
-                  <p className="mt-3 text-base text-zinc-600 dark:text-zinc-400 p-2 rounded bg-zinc-100 dark:bg-zinc-800">
+                  <p className="mt-3 text-base text-zinc-400 p-2 rounded bg-zinc-800">
                     {guessResult}
                   </p>
                 )}
@@ -899,7 +899,7 @@ export default function Home() {
 
             {/* Prize Pool Section */}
             <div className="relative p-[3px] rounded-xl bg-linear-to-br from-yellow-500 via-amber-400 to-yellow-600 shadow-lg shadow-yellow-500/30">
-              <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+              <div className="rounded-[11px] bg-zinc-900 p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <span>🏆</span>
@@ -910,7 +910,7 @@ export default function Home() {
                       onMouseEnter={() => setShowPrizeTooltip(true)}
                       onMouseLeave={() => setShowPrizeTooltip(false)}
                       onClick={() => setShowPrizeTooltip(!showPrizeTooltip)}
-                      className="w-5 h-5 rounded-full bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 flex items-center justify-center text-zinc-600 dark:text-zinc-300 text-xs font-bold transition-colors"
+                      className="w-5 h-5 rounded-full bg-zinc-700 hover:bg-zinc-600 flex items-center justify-center text-zinc-300 text-xs font-bold transition-colors"
                       title="Prize distribution info"
                     >
                       ?
@@ -955,7 +955,7 @@ export default function Home() {
                   key={img.id}
                   className="relative p-0.5 rounded-xl bg-linear-to-r from-blue-500 via-cyan-400 to-blue-600 shadow-md shadow-blue-500/10"
                 >
-                  <div className="rounded-[10px] bg-white dark:bg-zinc-900 p-3 sm:p-4">
+                  <div className="rounded-[10px] bg-zinc-900 p-3 sm:p-4">
                     <div className="flex gap-3 sm:gap-4">
                       {/* Image - Left side, fixed size */}
                       <div className="shrink-0">
@@ -969,19 +969,19 @@ export default function Home() {
                       {/* Info - Right side */}
                       <div className="flex-1 flex flex-col justify-between min-h-20 sm:min-h-24">
                         <div className="space-y-1">
-                          <div className="text-sm sm:text-base font-medium text-zinc-900 dark:text-zinc-50">
+                          <div className="text-sm sm:text-base font-medium text-zinc-50">
                             Answer: <span className="text-green-600 dark:text-green-400">{img.answer}</span>
                           </div>
-                          <div className="text-xs text-zinc-600 dark:text-zinc-400">
+                          <div className="text-xs text-zinc-400">
                             Revealed: {img.revealed_pixels} / {img.total_pixels} pixels
                           </div>
-                          <div className="text-xs text-zinc-600 dark:text-zinc-400">
+                          <div className="text-xs text-zinc-400">
                             Prize Pool: <span className="font-semibold text-yellow-600 dark:text-yellow-400">
                               {img.pool_amount || "0.00000000"} ETH
                             </span>
                           </div>
                           {img.winner_address && (
-                            <div className="text-xs text-zinc-600 dark:text-zinc-400">
+                            <div className="text-xs text-zinc-400">
                               Winner: <span className="font-mono text-blue-600 dark:text-blue-400">
                                 {img.winner_address.slice(0, 6)}...{img.winner_address.slice(-4)}
                               </span>

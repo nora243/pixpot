@@ -469,7 +469,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-50">
-      <header className="border-b border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900">
+      <header className="border-b border-white/10 bg-zinc-900">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/" className="text-sm text-blue-600 hover:underline">
@@ -489,7 +489,7 @@ export default function AdminPage() {
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         {/* Upload Form */}
-        <section className="mb-8 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 p-6">
+        <section className="mb-8 rounded-lg border border-white/10 bg-zinc-900 p-6">
           <h2 className="text-lg font-semibold mb-4">Upload New Image</h2>
           <form onSubmit={handleUpload} className="space-y-4">
             <div>
@@ -509,7 +509,7 @@ export default function AdminPage() {
                 name="answer"
                 placeholder="e.g., cat|kitten|feline (separate multiple answers with |)"
                 required
-                className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                 Tip: Use | to separate multiple correct answers. Not case-sensitive.
@@ -522,7 +522,7 @@ export default function AdminPage() {
                   type="text"
                   name="hint_0"
                   placeholder="Initial hint"
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -531,7 +531,7 @@ export default function AdminPage() {
                   type="text"
                   name="hint_1000"
                   placeholder="Medium difficulty hint"
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -540,7 +540,7 @@ export default function AdminPage() {
                   type="text"
                   name="hint_2000"
                   placeholder="Easy hint"
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -601,7 +601,7 @@ export default function AdminPage() {
                       : 'bg-linear-to-r from-blue-500 via-cyan-400 to-blue-600 shadow-md shadow-blue-500/10'
                   }`}
                 >
-                  <div className="rounded-[10px] bg-white dark:bg-zinc-900 p-3 sm:p-4">
+                  <div className="rounded-[10px] bg-zinc-900 p-3 sm:p-4">
                     <div className="flex gap-3 sm:gap-4">
                       {/* Image - Left side */}
                       <div className="shrink-0 relative">
@@ -656,7 +656,7 @@ export default function AdminPage() {
                         
                         {/* Deposit to Pool Section - Only show if game exists onchain */}
                         {onchainGames.has(img.id) && img.status !== 'completed' && (
-                          <div className="mt-3 pt-3 border-t border-black/10 dark:border-white/10">
+                          <div className="mt-3 pt-3 border-t border-white/10">
                             <div className="flex items-center gap-2">
                               <input
                                 type="number"
@@ -665,7 +665,7 @@ export default function AdminPage() {
                                 placeholder="ETH amount"
                                 value={depositAmounts[img.id] || ""}
                                 onChange={(e) => setDepositAmounts(prev => ({ ...prev, [img.id]: e.target.value }))}
-                                className="flex-1 rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                                className="flex-1 rounded-md border border-white/10 bg-zinc-800 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
                               />
                               <button
                                 onClick={() => depositToPool(img.id)}
@@ -740,7 +740,7 @@ export default function AdminPage() {
       {/* Edit Modal */}
       {editingImage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-zinc-900 rounded-lg max-w-md w-full p-6 space-y-4">
+          <div className="bg-zinc-900 rounded-lg max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Edit Image</h3>
               <button
@@ -760,7 +760,7 @@ export default function AdminPage() {
                   type="text"
                   name="original_name"
                   defaultValue={editingImage.original_name}
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -771,7 +771,7 @@ export default function AdminPage() {
                   name="answer"
                   defaultValue={editingImage.answer}
                   placeholder="cat|kitten|feline"
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                   Separate multiple answers with |
@@ -783,7 +783,7 @@ export default function AdminPage() {
                 <select
                   name="status"
                   defaultValue={editingImage.status}
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="active">Active</option>
                   <option value="archived">Archived</option>
@@ -802,7 +802,7 @@ export default function AdminPage() {
                   name="hint_0"
                   defaultValue={editingImage.hint_0 || ""}
                   placeholder="Initial hint (optional)"
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -813,7 +813,7 @@ export default function AdminPage() {
                   name="hint_1000"
                   defaultValue={editingImage.hint_1000 || ""}
                   placeholder="Medium difficulty hint (optional)"
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -824,7 +824,7 @@ export default function AdminPage() {
                   name="hint_2000"
                   defaultValue={editingImage.hint_2000 || ""}
                   placeholder="Easy hint (optional)"
-                  className="w-full rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-white/10 bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -832,7 +832,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setEditingImage(null)}
-                  className="flex-1 rounded-md border border-black/10 dark:border-white/10 px-4 py-2 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="flex-1 rounded-md border border-white/10 px-4 py-2 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                 >
                   Cancel
                 </button>

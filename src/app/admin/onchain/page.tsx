@@ -62,7 +62,7 @@ function Toast({ toast, onClose }: { toast: ToastMessage; onClose: () => void })
   return (
     <div className="fixed top-4 right-4 z-50 animate-slide-in-right">
       <div className={`relative p-[3px] rounded-xl bg-linear-to-br ${bgColors[toast.type]} shadow-lg shadow-${toast.type === 'success' ? 'green' : toast.type === 'error' ? 'red' : 'blue'}-500/30 min-w-[320px] max-w-md`}>
-        <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+        <div className="rounded-[11px] bg-zinc-900 p-4">
           <div className="flex items-start gap-3">
             <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
               toast.type === 'success' ? 'bg-green-500' :
@@ -663,7 +663,7 @@ export default function OnchainInfoPage() {
                   {/* Contract Balance - Featured */}
                   <div className="mb-4">
                     <div className="relative p-1 rounded-xl bg-linear-to-br from-yellow-500 via-amber-400 to-yellow-600 shadow-2xl shadow-yellow-500/40">
-                      <div className="rounded-xl bg-white dark:bg-zinc-900 p-6">
+                      <div className="rounded-xl bg-zinc-900 p-6">
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">💰 Contract Balance</div>
@@ -683,7 +683,7 @@ export default function OnchainInfoPage() {
                   {/* Withdraw Section */}
                   <div className="mb-6">
                     <div className="relative p-1 rounded-xl bg-linear-to-br from-green-500 via-emerald-400 to-green-600 shadow-xl shadow-green-500/30">
-                      <div className="rounded-xl bg-white dark:bg-zinc-900 p-5">
+                      <div className="rounded-xl bg-zinc-900 p-5">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-xl">💸</span>
                           <h3 className="text-lg font-bold">Withdraw ETH</h3>
@@ -700,7 +700,7 @@ export default function OnchainInfoPage() {
                               onChange={(e) => setWithdrawAmount(e.target.value)}
                               placeholder="Amount in ETH"
                               disabled={isWithdrawing}
-                              className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full px-4 py-2.5 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                             <div className="flex gap-2 mt-2">
                               <button
@@ -763,56 +763,56 @@ export default function OnchainInfoPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-blue-600 shadow-lg shadow-blue-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total Games</div>
                         <div className="text-2xl font-bold text-blue-400">{stats.totalGames}</div>
                       </div>
                     </div>
 
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-green-500 via-emerald-400 to-green-600 shadow-lg shadow-green-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Active Games</div>
                         <div className="text-2xl font-bold text-green-400">{stats.activeGames}</div>
                       </div>
                     </div>
 
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-purple-500 via-pink-400 to-purple-600 shadow-lg shadow-purple-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Completed Games</div>
                         <div className="text-2xl font-bold text-purple-400">{stats.completedGames}</div>
                       </div>
                     </div>
 
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-yellow-500 via-orange-400 to-yellow-600 shadow-lg shadow-yellow-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Guess Fee</div>
                         <div className="text-2xl font-bold text-yellow-400">{stats.guessFee} ETH</div>
                       </div>
                     </div>
 
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-cyan-500 via-blue-400 to-cyan-600 shadow-lg shadow-cyan-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total Pool</div>
                         <div className="text-2xl font-bold text-cyan-400">{stats.totalPoolAmount} ETH</div>
                       </div>
                     </div>
 
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-orange-500 via-red-400 to-orange-600 shadow-lg shadow-orange-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total Claimed</div>
                         <div className="text-2xl font-bold text-orange-400">{stats.totalClaimedAmount} ETH</div>
                       </div>
                     </div>
 
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-indigo-500 via-violet-400 to-indigo-600 shadow-lg shadow-indigo-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Winner %</div>
                         <div className="text-2xl font-bold text-indigo-400">{stats.winnerPercentage}%</div>
                       </div>
                     </div>
 
                     <div className="relative p-[3px] rounded-xl bg-linear-to-br from-pink-500 via-rose-400 to-pink-600 shadow-lg shadow-pink-500/20">
-                      <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-4">
+                      <div className="rounded-[11px] bg-zinc-900 p-4">
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Revealer %</div>
                         <div className="text-2xl font-bold text-pink-400">{stats.revealerPercentage}%</div>
                       </div>
@@ -850,7 +850,7 @@ export default function OnchainInfoPage() {
                             : 'bg-linear-to-br from-zinc-600 via-zinc-500 to-zinc-600 shadow-zinc-500/20'
                         }`}
                       >
-                        <div className="rounded-[11px] bg-white dark:bg-zinc-900 p-6">
+                        <div className="rounded-[11px] bg-zinc-900 p-6">
                           <div className="flex items-start justify-between mb-4">
                             <div>
                               <div className="flex items-center gap-3 mb-2">
@@ -975,7 +975,7 @@ export default function OnchainInfoPage() {
       {/* Confirmation Modal */}
       {confirmingGame !== null && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 max-w-md w-full shadow-2xl border border-zinc-200 dark:border-zinc-800">
+          <div className="bg-zinc-900 rounded-xl p-6 max-w-md w-full shadow-2xl border border-zinc-800">
             <h3 className="text-xl font-bold mb-4">Distribute Revealer Prizes</h3>
             <p className="text-zinc-600 dark:text-zinc-400 mb-6">
               Are you sure you want to distribute revealer prizes for <strong>Game #{confirmingGame}</strong>?

@@ -546,13 +546,13 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
   // Show message if no game is available
   if (noGameMessage) {
     return (
-      <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden rounded-lg shadow ring-1 ring-black/10 bg-white dark:bg-zinc-900 dark:ring-white/10">
+      <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden rounded-lg shadow ring-1 ring-white/10 bg-zinc-900">
         <div className="text-center p-8 space-y-4">
           <div className="text-4xl sm:text-6xl">🏁</div>
-          <div className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+          <div className="text-base sm:text-lg font-semibold text-zinc-50">
             {noGameMessage}
           </div>
-          <div className="text-sm text-zinc-600 dark:text-zinc-400">
+          <div className="text-sm text-zinc-400">
             {noGameMessage.includes("All games") 
               ? "Contact admin to add more games."
               : "A new game will start soon."}
@@ -565,7 +565,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-square touch-none select-none overflow-hidden rounded-lg shadow ring-1 ring-black/10 bg-white dark:bg-zinc-900 dark:ring-white/10"
+      className="relative w-full aspect-square touch-none select-none overflow-hidden rounded-lg shadow ring-1 ring-white/10 bg-zinc-900"
       style={{ 
         overscrollBehavior: 'none',
         touchAction: 'none'
