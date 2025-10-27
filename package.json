@@ -33,6 +33,6 @@
     "typescript": "^5"
   },
   "overrides": {
-    "@base-org/account": "latest"
+    "@base-org/account": "2.2.0"
   }
 }
