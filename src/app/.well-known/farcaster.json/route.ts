@@ -13,7 +13,7 @@ export async function GET() {
             "signature": "XLIs1xD6LppyDKUAws03vOSNNS10TcWjM4qV807ZpGoh6gbYI/9nuSrkalSH10j8Cx3X4dZ5XEyXJwx/PcQyaxw="
         },
         "baseBuilder": {
-            "allowedAddresses": ["0xEDf20419eFECd79440C05CC645562D509a164263"] // add your Base Account address here
+            "allowedAddresses": ["0xCa2b01D0552A30F3619b53b2b59aA3d4358f1Fbf"] // add your Base Account address here
         },
         "miniapp": {
             "version": "1",
