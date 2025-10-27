@@ -17,10 +17,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "PixPot",
-  description: "Reveal pixels, guess the image, win the pot — on Base",
-};
+// export const metadata: Metadata = {
+//   title: "PixPot",
+//   description: "Reveal pixels, guess the image, win the pot — on Base",
+// };
 
 export default function RootLayout({
   children,
