@@ -16,7 +16,7 @@ export async function GET() {
             "allowedAddresses": ["0xEDf20419eFECd79440C05CC645562D509a164263"] // add your Base Account address here
         },
         "miniapp": {
-            "version": "1.0.0",
+            "version": "1",
             "name": "PixPot",
             "homeUrl": "https://pixpot.fun/",
             "iconUrl": "https://pixpot.fun/icon.png",
