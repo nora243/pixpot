@@ -8,9 +8,9 @@ export async function GET() {
     const URL = process.env.NEXT_PUBLIC_URL as string;
     return Response.json({
         "accountAssociation": {
-            "header": "",
-            "payload": "",
-            "signature": ""
+            "header": "eyJmaWQiOjEzNDI0MTgsInR5cGUiOiJhdXRoIiwia2V5IjoiMHhhZDRCM2Q3MUI2YzgwRTkxOGRDZTdDRUFlYzdBMTlkODk1MUE3MzM1In0",
+            "payload": "eyJkb21haW4iOiJwaXhwb3QuZnVuIn0",
+            "signature": "XLIs1xD6LppyDKUAws03vOSNNS10TcWjM4qV807ZpGoh6gbYI/9nuSrkalSH10j8Cx3X4dZ5XEyXJwx/PcQyaxw="
         },
         "baseBuilder": {
             "allowedAddresses": ["0xEDf20419eFECd79440C05CC645562D509a164263"] // add your Base Account address here
