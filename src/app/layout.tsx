@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
+import { sdk } from '@farcaster/miniapp-sdk';
+import { useEffect } from 'react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +25,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    sdk.actions.ready();
+  }, []);
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>

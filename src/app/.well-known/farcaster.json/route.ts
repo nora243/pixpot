@@ -1,0 +1,45 @@
+function withValidProperties(properties: Record<string, undefined | string | string[]>) {
+    return Object.fromEntries(
+        Object.entries(properties).filter(([_, value]) => (Array.isArray(value) ? value.length > 0 : !!value))
+    );
+}
+
+export async function GET() {
+    const URL = process.env.NEXT_PUBLIC_URL as string;
+    return Response.json({
+        "accountAssociation": {
+            "header": "",
+            "payload": "",
+            "signature": ""
+        },
+        "baseBuilder": {
+            "allowedAddresses": ["0xEDf20419eFECd79440C05CC645562D509a164263"] // add your Base Account address here
+        },
+        "miniapp": {
+            "version": "1.0.0",
+            "name": "PixPot",
+            "homeUrl": "https://pixpot.fun/",
+            "iconUrl": "https://pixpot.fun/icon.png",
+            "imageUrl": "https://pixpot.fun/image.png",
+            "buttonTitle": "Play PixPot",
+            "splashImageUrl": "https://pixpot.fun/logo.png",
+            "splashBackgroundColor": "#1E90FF",
+            "webhookUrl": "https://pixpot.fun",
+            "subtitle": "Create pixel art with friends!",
+            "description": "PixPot is a social mini app where you can challenge your friends to solve pixel art puzzles in real time. Reveal pixels, guess the image, and win rewards together!",
+            "screenshotUrls": [
+                "https://pixpot.fun/ss1.png",
+                "https://pixpot.fun/ss2.png",
+                "https://pixpot.fun/ss1.png"
+            ],
+            "primaryCategory": "social",
+            "tags": ["example", "miniapp", "baseapp"],
+            "heroImageUrl": "https://pixpot.fun/logo.png",
+            "tagline": "Play instantly",
+            "ogTitle": "PixPot Mini App",
+            "ogDescription": "Challenge friends in real time.",
+            "ogImageUrl": "https://pixpot.fun/logo.png",
+            "noindex": false
+        }
+    }); // see the next step for the manifest_json_object
+}
