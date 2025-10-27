@@ -62,6 +62,8 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
     mid: { x: number; y: number };
     scale: number;
   } | null>(null);
+  const touchCountRef = useRef(0); // Track number of active touches
+  const isPinchingRef = useRef(false); // Flag to prevent pan during pinch
 
   const size = GRID_SIZE;
 
@@ -614,9 +616,19 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
       }}
       onClick={handleClick}
       onTouchStart={(e) => {
+        touchCountRef.current = e.touches.length;
+        
         if (e.touches.length === 1) {
-          lastPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          // Single touch - prepare for panning (only if not already pinching)
+          if (!isPinchingRef.current) {
+            lastPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            hasDraggedRef.current = false;
+          }
         } else if (e.touches.length === 2) {
+          // Two touches - start pinch zoom
+          isPinchingRef.current = true;
+          lastPosRef.current = null; // Clear pan state
+          
           const [a, b] = [e.touches[0], e.touches[1]];
           const dx = b.clientX - a.clientX;
           const dy = b.clientY - a.clientY;
@@ -626,29 +638,44 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
         }
       }}
       onTouchMove={(e) => {
-        if (e.touches.length === 1 && lastPosRef.current && !pinchRef.current) {
+        touchCountRef.current = e.touches.length;
+        
+        // Only pan with exactly 1 touch AND not during/after pinch
+        if (e.touches.length === 1 && lastPosRef.current && !isPinchingRef.current && !pinchRef.current) {
           const t = e.touches[0];
           const dx = t.clientX - lastPosRef.current.x;
           const dy = t.clientY - lastPosRef.current.y;
-          const newTx = tx + dx;
-          const newTy = ty + dy;
-          const clamped = clampTransform(scale, newTx, newTy);
-          setTx(clamped.tx);
-          setTy(clamped.ty);
-          lastPosRef.current = { x: t.clientX, y: t.clientY };
-          const idx = screenToPixel(t.clientX, t.clientY);
-          setHovered(idx);
-        } else if (e.touches.length === 2) {
-          // Note: preventDefault is handled in useEffect with { passive: false }
+          
+          // Only start panning if moved at least 3px (avoid accidental pans)
+          const distance = Math.hypot(dx, dy);
+          if (distance > 3 || hasDraggedRef.current) {
+            hasDraggedRef.current = true;
+            
+            const newTx = tx + dx;
+            const newTy = ty + dy;
+            const clamped = clampTransform(scale, newTx, newTy);
+            setTx(clamped.tx);
+            setTy(clamped.ty);
+            lastPosRef.current = { x: t.clientX, y: t.clientY };
+            
+            const idx = screenToPixel(t.clientX, t.clientY);
+            setHovered(idx);
+          }
+        } else if (e.touches.length === 2 && pinchRef.current) {
+          // Pinch zoom with exactly 2 touches
+          isPinchingRef.current = true;
+          lastPosRef.current = null; // Ensure no pan state during pinch
+          
           const [a, b] = [e.touches[0], e.touches[1]];
           const dx = b.clientX - a.clientX;
           const dy = b.clientY - a.clientY;
           const dist = Math.hypot(dx, dy);
           const mid = { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 };
           const pinch = pinchRef.current;
-          if (!pinch) return;
+          
           const factor = dist / pinch.dist;
           const newScale = Math.min(64, Math.max(0.5, pinch.scale * factor));
+          
           // Keep midpoint stable
           const rect = containerRef.current!.getBoundingClientRect();
           const localX = mid.x - rect.left;
@@ -661,11 +688,40 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
           setScale(newScale);
           setTx(clamped.tx);
           setTy(clamped.ty);
+        } else if (e.touches.length > 2) {
+          // More than 2 touches - block all interactions
+          lastPosRef.current = null;
+          pinchRef.current = null;
         }
       }}
-      onTouchEnd={() => {
+      onTouchEnd={(e) => {
+        touchCountRef.current = e.touches.length;
+        
+        // If all fingers lifted, reset states
+        if (e.touches.length === 0) {
+          lastPosRef.current = null;
+          pinchRef.current = null;
+          isPinchingRef.current = false;
+          hasDraggedRef.current = false;
+        } else if (e.touches.length === 1) {
+          // If went from 2+ touches to 1 touch, reset pinch but allow pan
+          pinchRef.current = null;
+          // Wait a bit before allowing pan to avoid accidental movement
+          setTimeout(() => {
+            if (touchCountRef.current === 1 && !isPinchingRef.current) {
+              isPinchingRef.current = false;
+              lastPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+          }, 100);
+        }
+      }}
+      onTouchCancel={() => {
+        // Reset all touch states on cancel
         lastPosRef.current = null;
         pinchRef.current = null;
+        isPinchingRef.current = false;
+        hasDraggedRef.current = false;
+        touchCountRef.current = 0;
       }}
     >
       <canvas

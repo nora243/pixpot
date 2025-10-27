@@ -46,8 +46,8 @@ export default function RootLayout({
 }>) {
   // console.log("DB_USER:", process.env.DB_USER);
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className="dark">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-900 text-zinc-50`}>
         <Providers>{children}</Providers>
       </body>
     </html>
