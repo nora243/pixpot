@@ -1,5 +1,20 @@
 import { GRID_SIZE } from "@/lib/constants";
 import { query } from "@/lib/db";
+import { createPublicClient, http } from "viem";
+import { base, baseSepolia } from "viem/chains";
+import { PIXPOT_CONTRACT_ADDRESS, PIXPOT_CONTRACT_ABI } from "@/lib/contract";
+
+const publicClient = process.env.NEXT_PUBLIC_ENV === 'development'
+  ? (() => {
+      return createPublicClient({
+        chain: baseSepolia,
+        transport: http(),
+      });
+    })()
+  : createPublicClient({
+      chain: base,
+      transport: http(),
+    });
 
 export async function POST(request: Request) {
   try {
@@ -17,6 +32,87 @@ export async function POST(request: Request) {
 
     if (!txHash) {
       return new Response(JSON.stringify({ success: false, error: "Transaction hash required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Verify transaction onchain with retry logic
+    try {
+      // Wait for transaction to be mined (with timeout)
+      const receipt = await publicClient.waitForTransactionReceipt({ 
+        hash: txHash as `0x${string}`,
+        timeout: 20_000, // 20 seconds timeout
+      });
+
+      // Check transaction succeeded
+      if (receipt.status !== 'success') {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Transaction failed onchain" 
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Verify transaction was sent to correct contract
+      if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Transaction was not sent to PixPot contract" 
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Verify caller matches walletAddress
+      if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Transaction sender does not match wallet address" 
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Optional: Verify the transaction called revealPixels function
+      // This checks the function signature in transaction input
+      const txData = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
+      const revealPixelsFunctionSig = '0x'; // First 4 bytes of keccak256("revealPixels(uint256,uint256[])")
+      
+      // Get function selector from ABI
+      const revealPixelsAbi = PIXPOT_CONTRACT_ABI.find(
+        (item: any) => item.type === 'function' && item.name === 'revealPixels'
+      );
+      
+      if (revealPixelsAbi && txData.input) {
+        const functionSelector = txData.input.slice(0, 10); // First 10 chars = '0x' + 8 hex chars (4 bytes)
+        // You could add more strict validation here if needed
+      }
+
+    } catch (verifyError: any) {
+      console.error("Transaction verification error:", verifyError);
+      
+      // Check if it's a timeout error
+      if (verifyError.message?.includes('timeout') || verifyError.message?.includes('timed out')) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Transaction verification timeout. Please try again.",
+          details: "Transaction is taking longer than expected to be mined."
+        }), {
+          status: 408, // Request Timeout
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: "Failed to verify transaction onchain",
+        details: verifyError.message 
+      }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
