@@ -19,6 +19,11 @@ type OpenPixelResponse = {
   index: number;
 };
 
+type NotificationState = {
+  message: string;
+  type: "success" | "error" | "info" | "loading";
+} | null;
+
 export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGameDataChange }: Props) {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
@@ -34,7 +39,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
   const [clicked, setClicked] = useState<number | null>(null);
   const [gameData, setGameData] = useState<any>(null);
   const [noGameMessage, setNoGameMessage] = useState<string | null>(null);
-  const [notification, setNotification] = useState<string | null>(null);
+  const [notification, setNotification] = useState<NotificationState>(null);
   const [showCrosshair, setShowCrosshair] = useState(true);
 
   // Read current game pool from contract
@@ -337,9 +342,9 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
     onRevealedCountChange?.(revealed.size);
   }, [revealed, onRevealedCountChange]);
 
-  // Auto-hide notification after 3 seconds
+  // Auto-hide notification after 3 seconds (except loading)
   useEffect(() => {
-    if (notification) {
+    if (notification && notification.type !== "loading") {
       const timer = setTimeout(() => setNotification(null), 3000);
       return () => clearTimeout(timer);
     }
@@ -406,19 +411,19 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
     
     // Check if wallet is connected
     if (!address) {
-      setNotification("Please connect your wallet to reveal pixels");
+      setNotification({ message: "Please connect your wallet to reveal pixels", type: "info" });
       return;
     }
 
     // Check if contract is configured
     if (!PIXPOT_CONTRACT_ADDRESS) {
-      setNotification("Smart contract not configured");
+      setNotification({ message: "Smart contract not configured", type: "error" });
       return;
     }
 
     // Check if game data is loaded
     if (!gameData?.imageId) {
-      setNotification("Game not loaded yet");
+      setNotification({ message: "Game not loaded yet", type: "info" });
       return;
     }
     
@@ -430,7 +435,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
 
     // Check if already revealed or pending
     if (revealed.has(index) || pending.has(index)) {
-      setNotification("This pixel is already revealed or being revealed");
+      setNotification({ message: "This pixel is already revealed or being revealed", type: "info" });
       return;
     }
 
@@ -442,7 +447,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
     });
 
     try {
-      setNotification("Revealing pixel onchain...");
+      setNotification({ message: "Sending transaction to blockchain...", type: "loading" });
 
       // Step 1: Call revealPixels() onchain
       const tx = await writeContractAsync({
@@ -455,14 +460,14 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
         ],
       });
 
-      setNotification("Waiting for blockchain confirmation...");
+      setNotification({ message: "Waiting for blockchain confirmation...", type: "loading" });
 
       // Step 2: Wait for transaction confirmation
       if (publicClient) {
         await publicClient.waitForTransactionReceipt({ hash: tx });
       }
 
-      setNotification("Confirmed! Saving to database...");
+      setNotification({ message: "Verifying transaction onchain...", type: "loading" });
 
       // Step 3: Save to database only after onchain success
       const res = await fetch("/api/openPixel", {
@@ -475,20 +480,27 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const errorData = await res.json();
-        // If pixel already revealed by someone else (race condition)
-        if (errorData.alreadyRevealed) {
-          setNotification("Someone just revealed this pixel!");
+        // Handle specific error cases
+        if (data.alreadyRevealed) {
+          setNotification({ message: "Someone just revealed this pixel!", type: "error" });
           // The pixel will be synced by realtime polling
+        } else if (data.error?.includes("timeout")) {
+          setNotification({ message: "Transaction verification timeout. Please try again.", type: "error" });
+        } else if (data.error?.includes("Transaction failed")) {
+          setNotification({ message: "Transaction failed onchain", type: "error" });
+        } else if (data.error?.includes("not sent to PixPot")) {
+          setNotification({ message: "Invalid transaction", type: "error" });
+        } else if (data.error?.includes("does not match")) {
+          setNotification({ message: "Wallet address mismatch", type: "error" });
         } else {
-          throw new Error(errorData.error || "Failed to save pixel to database");
+          setNotification({ message: data.error || "Failed to reveal pixel", type: "error" });
         }
         return;
       }
 
-      const data = (await res.json()) as OpenPixelResponse;
-      
       if (data.success) {
         // Draw pixel immediately for instant feedback
         drawPixel(index, data.color);
@@ -499,7 +511,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
           return next;
         });
 
-        setNotification("Pixel revealed successfully!");
+        setNotification({ message: "Pixel revealed successfully!", type: "success" });
 
         // Refetch contract pool amount to update prize pool display
         if (refetchContractGame) {
@@ -511,13 +523,17 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
       
       // Handle specific errors
       if (err.message?.includes("Game is not active")) {
-        setNotification("This game is not active");
+        setNotification({ message: "This game is not active", type: "error" });
       } else if (err.message?.includes("Exceeds total pixels")) {
-        setNotification("All pixels already revealed");
-      } else if (err.message?.includes("User rejected")) {
-        setNotification("Transaction cancelled");
+        setNotification({ message: "All pixels already revealed", type: "error" });
+      } else if (err.message?.includes("User rejected") || err.message?.includes("rejected")) {
+        setNotification({ message: "Transaction cancelled", type: "info" });
+      } else if (err.message?.includes("insufficient funds")) {
+        setNotification({ message: "Insufficient ETH to reveal pixel", type: "error" });
+      } else if (err.message?.includes("network")) {
+        setNotification({ message: "Network error. Please try again.", type: "error" });
       } else {
-        setNotification("Failed to reveal pixel. Please try again.");
+        setNotification({ message: "Failed to reveal pixel. Please try again.", type: "error" });
       }
     } finally {
       // Always remove from pending state
@@ -900,15 +916,50 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
         </button>
       </div>
       
-      {/* Notification Toast */}
+      {/* Notification */}
       {notification && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <div className="rounded-lg bg-blue-600 dark:bg-blue-500 px-4 py-3 text-sm font-medium text-white shadow-lg ring-1 ring-black/10 dark:ring-white/10">
+          <div className={`rounded-lg px-4 py-3 text-sm font-medium text-white shadow-lg ring-1 ring-black/10 ${
+            notification.type === "success" 
+              ? "bg-green-600" 
+              : notification.type === "error"
+              ? "bg-red-600"
+              : notification.type === "loading"
+              ? "bg-blue-600"
+              : "bg-blue-600" // info uses blue
+          }`}>
             <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{notification}</span>
+              {notification.type === "loading" ? (
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              ) : notification.type === "success" ? (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : notification.type === "error" ? (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+              <span>{notification.message}</span>
             </div>
           </div>
         </div>
