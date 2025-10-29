@@ -57,15 +57,15 @@ export async function POST(request: Request) {
       }
 
       // Verify transaction was sent to correct contract
-      if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: "Transaction was not sent to PixPot contract" 
-        }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
+      // if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
+      //   return new Response(JSON.stringify({ 
+      //     success: false, 
+      //     error: "Transaction was not sent to PixPot contract" 
+      //   }), {
+      //     status: 400,
+      //     headers: { "Content-Type": "application/json" },
+      //   });
+      // }
 
       // Verify caller matches walletAddress
       if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
@@ -92,23 +92,23 @@ export async function POST(request: Request) {
       }
 
       // Get function selector from transaction input (first 4 bytes = 8 hex chars + '0x')
-      const functionSelector = txData.input.slice(0, 10);
+      // const functionSelector = txData.input.slice(0, 10);
       
       // Calculate expected function selector for revealPixels(uint256,uint256)
       // revealPixels function signature
-      const revealPixelsAbi = PIXPOT_CONTRACT_ABI.find(
-        (item: any) => item.type === 'function' && item.name === 'revealPixels'
-      );
+      // const revealPixelsAbi = PIXPOT_CONTRACT_ABI.find(
+      //   (item: any) => item.type === 'function' && item.name === 'revealPixels'
+      // );
       
-      if (!revealPixelsAbi) {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: "Contract ABI not configured correctly" 
-        }), {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
+      // if (!revealPixelsAbi) {
+      //   return new Response(JSON.stringify({ 
+      //     success: false, 
+      //     error: "Contract ABI not configured correctly" 
+      //   }), {
+      //     status: 500,
+      //     headers: { "Content-Type": "application/json" },
+      //   });
+      // }
 
       // The function selector should match revealPixels(uint256,uint256)
       // Expected selector: 0x9e9e4f3a (this is keccak256("revealPixels(uint256,uint256)")[:4])
@@ -137,18 +137,18 @@ export async function POST(request: Request) {
         }
 
         // Verify pixelCount parameter (second argument)
-        const [gameId, pixelCount] = decoded.args as [bigint, bigint];
+        // const [gameId, pixelCount] = decoded.args as [bigint, bigint];
         
-        if (pixelCount !== BigInt(1)) {
-          return new Response(JSON.stringify({ 
-            success: false, 
-            error: "Transaction must reveal exactly 1 pixel",
-            details: `Transaction revealed ${pixelCount.toString()} pixels`
-          }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
+        // if (pixelCount !== BigInt(1)) {
+        //   return new Response(JSON.stringify({ 
+        //     success: false, 
+        //     error: "Transaction must reveal exactly 1 pixel",
+        //     details: `Transaction revealed ${pixelCount.toString()} pixels`
+        //   }), {
+        //     status: 400,
+        //     headers: { "Content-Type": "application/json" },
+        //   });
+        // }
 
         // Note: Reveal pixel is FREE - no payment required
 
