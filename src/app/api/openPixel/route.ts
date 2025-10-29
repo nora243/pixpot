@@ -68,15 +68,15 @@ export async function POST(request: Request) {
       // }
 
       // Verify caller matches walletAddress
-      if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: "Transaction sender does not match wallet address" 
-        }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
+      // if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
+      //   return new Response(JSON.stringify({ 
+      //     success: false, 
+      //     error: "Transaction sender does not match wallet address" 
+      //   }), {
+      //     status: 400,
+      //     headers: { "Content-Type": "application/json" },
+      //   });
+      // }
 
       // Verify the transaction called revealPixels function
       const txData = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
