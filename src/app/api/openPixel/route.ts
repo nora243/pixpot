@@ -2,7 +2,7 @@ import { GRID_SIZE } from "@/lib/constants";
 import { query } from "@/lib/db";
 import { createPublicClient, http } from "viem";
 import { base, baseSepolia } from "viem/chains";
-import { PIXPOT_CONTRACT_ADDRESS, PIXPOT_CONTRACT_ABI } from "@/lib/contract";
+import { PIXPOT_CONTRACT_ADDRESS } from "@/lib/contract";
 
 const publicClient = process.env.NEXT_PUBLIC_ENV === 'development'
   ? (() => {
@@ -57,26 +57,26 @@ export async function POST(request: Request) {
       }
 
       // Verify transaction was sent to correct contract
-      // if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
-      //   return new Response(JSON.stringify({ 
-      //     success: false, 
-      //     error: "Transaction was not sent to PixPot contract" 
-      //   }), {
-      //     status: 400,
-      //     headers: { "Content-Type": "application/json" },
-      //   });
-      // }
+      if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Transaction was not sent to PixPot contract" 
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
 
-      // Verify caller matches walletAddress
-      // if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
-      //   return new Response(JSON.stringify({ 
-      //     success: false, 
-      //     error: "Transaction sender does not match wallet address" 
-      //   }), {
-      //     status: 400,
-      //     headers: { "Content-Type": "application/json" },
-      //   });
-      // }
+      //Verify caller matches walletAddress
+      if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Transaction sender does not match wallet address" 
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
 
       // Verify the transaction called revealPixels function
       const txData = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
@@ -113,56 +113,39 @@ export async function POST(request: Request) {
       // The function selector should match revealPixels(uint256,uint256)
       // Expected selector: 0x9e9e4f3a (this is keccak256("revealPixels(uint256,uint256)")[:4])
       // We'll verify by decoding the transaction input
-      const expectedFunctionName = 'revealPixels';
+      // const expectedFunctionName = 'revealPixels';
       
       // Simple check: function selector should be consistent
       // For stronger validation, decode the parameters
-      try {
-        const { decodeFunctionData } = await import('viem');
-        const decoded = decodeFunctionData({
-          abi: PIXPOT_CONTRACT_ABI,
-          data: txData.input as `0x${string}`,
-        });
+      // try {
+      //   const { decodeFunctionData } = await import('viem');
+      //   const decoded = decodeFunctionData({
+      //     abi: PIXPOT_CONTRACT_ABI,
+      //     data: txData.input as `0x${string}`,
+      //   });
 
-        // Verify it's the revealPixels function
-        if (decoded.functionName !== expectedFunctionName) {
-          return new Response(JSON.stringify({ 
-            success: false, 
-            error: "Transaction did not call revealPixels function",
-            details: `Function called: ${decoded.functionName}`
-          }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        // Verify pixelCount parameter (second argument)
-        // const [gameId, pixelCount] = decoded.args as [bigint, bigint];
-        
-        // if (pixelCount !== BigInt(1)) {
-        //   return new Response(JSON.stringify({ 
-        //     success: false, 
-        //     error: "Transaction must reveal exactly 1 pixel",
-        //     details: `Transaction revealed ${pixelCount.toString()} pixels`
-        //   }), {
-        //     status: 400,
-        //     headers: { "Content-Type": "application/json" },
-        //   });
-        // }
-
-        // Note: Reveal pixel is FREE - no payment required
-
-      } catch (decodeError) {
-        console.error("Error decoding transaction:", decodeError);
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: "Failed to decode transaction data",
-          details: "Transaction may not be a valid revealPixels call"
-        }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
+      //   // Verify it's the revealPixels function
+      //   if (decoded.functionName !== expectedFunctionName) {
+      //     return new Response(JSON.stringify({ 
+      //       success: false, 
+      //       error: "Transaction did not call revealPixels function",
+      //       details: `Function called: ${decoded.functionName}`
+      //     }), {
+      //       status: 400,
+      //       headers: { "Content-Type": "application/json" },
+      //     });
+      //   }
+      // } catch (decodeError) {
+      //   console.error("Error decoding transaction:", decodeError);
+      //   return new Response(JSON.stringify({ 
+      //     success: false, 
+      //     error: "Failed to decode transaction data",
+      //     details: "Transaction may not be a valid revealPixels call"
+      //   }), {
+      //     status: 400,
+      //     headers: { "Content-Type": "application/json" },
+      //   });
+      // }
 
     } catch (verifyError: any) {
       console.error("Transaction verification error:", verifyError);
