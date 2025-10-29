@@ -25,7 +25,7 @@ export async function GET() {
             "splashImageUrl": "https://pixpot.fun/logo.png",
             "splashBackgroundColor": "#1E90FF",
             "webhookUrl": "https://pixpot.fun",
-            "subtitle": "Create pixel art with friends!",
+            "subtitle": "Reveal. Guess. Win!",
             "description": "PixPot is a social mini app where you can challenge your friends to solve pixel art puzzles in real time. Reveal pixels, guess the image, and win rewards together!",
             "screenshotUrls": [
                 "https://pixpot.fun/ss1.png",

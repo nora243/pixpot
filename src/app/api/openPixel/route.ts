@@ -78,19 +78,90 @@ export async function POST(request: Request) {
         });
       }
 
-      // Optional: Verify the transaction called revealPixels function
-      // This checks the function signature in transaction input
+      // Verify the transaction called revealPixels function
       const txData = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
-      const revealPixelsFunctionSig = '0x'; // First 4 bytes of keccak256("revealPixels(uint256,uint256[])")
       
-      // Get function selector from ABI
+      if (!txData.input || txData.input === '0x') {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Transaction did not call any contract function" 
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Get function selector from transaction input (first 4 bytes = 8 hex chars + '0x')
+      const functionSelector = txData.input.slice(0, 10);
+      
+      // Calculate expected function selector for revealPixels(uint256,uint256)
+      // revealPixels function signature
       const revealPixelsAbi = PIXPOT_CONTRACT_ABI.find(
         (item: any) => item.type === 'function' && item.name === 'revealPixels'
       );
       
-      if (revealPixelsAbi && txData.input) {
-        const functionSelector = txData.input.slice(0, 10); // First 10 chars = '0x' + 8 hex chars (4 bytes)
-        // You could add more strict validation here if needed
+      if (!revealPixelsAbi) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Contract ABI not configured correctly" 
+        }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // The function selector should match revealPixels(uint256,uint256)
+      // Expected selector: 0x9e9e4f3a (this is keccak256("revealPixels(uint256,uint256)")[:4])
+      // We'll verify by decoding the transaction input
+      const expectedFunctionName = 'revealPixels';
+      
+      // Simple check: function selector should be consistent
+      // For stronger validation, decode the parameters
+      try {
+        const { decodeFunctionData } = await import('viem');
+        const decoded = decodeFunctionData({
+          abi: PIXPOT_CONTRACT_ABI,
+          data: txData.input as `0x${string}`,
+        });
+
+        // Verify it's the revealPixels function
+        if (decoded.functionName !== expectedFunctionName) {
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Transaction did not call revealPixels function",
+            details: `Function called: ${decoded.functionName}`
+          }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        // Verify pixelCount parameter (second argument)
+        const [gameId, pixelCount] = decoded.args as [bigint, bigint];
+        
+        if (pixelCount !== BigInt(1)) {
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Transaction must reveal exactly 1 pixel",
+            details: `Transaction revealed ${pixelCount.toString()} pixels`
+          }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        // Note: Reveal pixel is FREE - no payment required
+
+      } catch (decodeError) {
+        console.error("Error decoding transaction:", decodeError);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Failed to decode transaction data",
+          details: "Transaction may not be a valid revealPixels call"
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
     } catch (verifyError: any) {
@@ -114,6 +185,23 @@ export async function POST(request: Request) {
         details: verifyError.message 
       }), {
         status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Check if this txHash has already been used
+    const existingTx = await query<any[]>(
+      `SELECT pixel_index, image_id FROM revealed_pixels WHERE tx_hash = ?`,
+      [txHash]
+    );
+
+    if (existingTx.length > 0) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: "This transaction has already been used to reveal a pixel",
+        details: `Transaction ${txHash} was already used for pixel ${existingTx[0].pixel_index}`
+      }), {
+        status: 409, // Conflict
         headers: { "Content-Type": "application/json" },
       });
     }

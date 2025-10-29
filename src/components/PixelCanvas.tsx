@@ -97,9 +97,9 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
             let poolAmount = data.poolAmount || "0"; // Fallback to database pool
             let gameId = data.imageId || 0;
             
-            console.log("[PixelCanvas] Contract game data:", contractGame);
-            console.log("[PixelCanvas] Database pool:", data.poolAmount);
-            console.log("[PixelCanvas] Database gameId:", data.imageId);
+            // console.log("[PixelCanvas] Contract game data:", contractGame);
+            // console.log("[PixelCanvas] Database pool:", data.poolAmount);
+            // console.log("[PixelCanvas] Database gameId:", data.imageId);
             
             // Try to get pool from contract if available
             if (contractGame && typeof contractGame === 'object') {
@@ -109,15 +109,15 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
                 const contractIsActive = Array.isArray(contractGame) ? contractGame[6] : (contractGame as any).isActive;
                 const contractPoolAmount = Array.isArray(contractGame) ? contractGame[4] : (contractGame as any).poolAmount;
                 
-                console.log("[PixelCanvas] Contract game ID:", contractGameId);
-                console.log("[PixelCanvas] Contract is active:", contractIsActive);
-                console.log("[PixelCanvas] Contract pool amount raw:", contractPoolAmount);
+                // console.log("[PixelCanvas] Contract game ID:", contractGameId);
+                // console.log("[PixelCanvas] Contract is active:", contractIsActive);
+                // console.log("[PixelCanvas] Contract pool amount raw:", contractPoolAmount);
                 
                 // Only use contract data if it's active AND matches our database game
                 if (contractIsActive && contractGameId === data.imageId) {
                   if (contractPoolAmount !== undefined && contractPoolAmount !== null) {
                     poolAmount = formatEther(BigInt(contractPoolAmount.toString()));
-                    console.log("[PixelCanvas] Using contract pool:", poolAmount);
+                    // console.log("[PixelCanvas] Using contract pool:", poolAmount);
                   }
                   gameId = contractGameId;
                 } else {
@@ -131,7 +131,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
               console.log("[PixelCanvas] No contract game data, using database pool");
             }
             
-            console.log("[PixelCanvas] Final pool amount:", poolAmount);
+            // console.log("[PixelCanvas] Final pool amount:", poolAmount);
             
             onGameDataChange({
               poolAmount: poolAmount,
@@ -190,7 +190,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
           const currentRevealed = revealedRef.current;
           const currentPending = pendingRef.current;
           
-          console.log('[Realtime] Current revealed:', currentRevealed.size, 'New revealed:', data.revealed.length);
+          // console.log('[Realtime] Current revealed:', currentRevealed.size, 'New revealed:', data.revealed.length);
           
           // Check if there are new pixels revealed by others
           const newRevealedSet = new Set<number>();
@@ -208,7 +208,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
 
           // If there are new pixels, update state and redraw
           if (newPixels.length > 0) {
-            console.log('[Realtime] Found', newPixels.length, 'new pixels:', newPixels.slice(0, 5));
+            // console.log('[Realtime] Found', newPixels.length, 'new pixels:', newPixels.slice(0, 5));
             setRevealed(newRevealedSet);
             revealedRef.current = newRevealedSet;
             
@@ -231,11 +231,11 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
                   ctx.fillStyle = color;
                   ctx.fillRect(x, y, 1, 1);
                 });
-                console.log('[Realtime] Drew', newPixels.length, 'pixels');
+                // console.log('[Realtime] Drew', newPixels.length, 'pixels');
               }
             }
           } else {
-            console.log('[Realtime] No new pixels');
+            // console.log('[Realtime] No new pixels');
           }
 
           // Update hints if changed
@@ -254,7 +254,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
     }, 5000); // Poll every 5 seconds (reduced from 3s)
 
     return () => {
-      console.log('[Realtime] Stopping sync');
+      // console.log('[Realtime] Stopping sync');
       clearInterval(syncInterval);
     };
   }, [gameData?.imageId, size, onHintsChange, refetchContractGame]);
