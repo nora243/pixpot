@@ -56,8 +56,31 @@ export default function Home() {
     adminSecret: string;
   } | null>(null);
 
+  const [user, setUser] = useState<any>(null);
+  const [isInMiniApp, setIsInMiniApp] = useState(false); 
+
   useEffect(() => {
     sdk.actions.ready();
+  }, []);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        // Check if we're in a Mini App
+        const miniAppStatus = await sdk.isInMiniApp();
+        setIsInMiniApp(miniAppStatus);
+
+        if (miniAppStatus) {
+          // Get context and extract user info
+          const context = await sdk.context;
+          setUser(context.user);
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    };
+
+    loadUserData();
   }, []);
 
   // Check if first visit
@@ -662,7 +685,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="scale-90 sm:scale-100 origin-right">
-                <ConnectButton />
+                <ConnectButton accountStatus="avatar"/>
               </div>
               {address && (
                 <Link 
@@ -671,7 +694,15 @@ export default function Home() {
                   title="View Profile"
                 >
                   <div className="relative rounded-md bg-black/80 backdrop-blur-sm px-2.5 py-1.5 transition-all">
-                    <span className="text-lg">👤</span>
+                    {isInMiniApp && user?.pfpUrl ? (
+                      <img 
+                        src={user.pfpUrl} 
+                        alt="Profile" 
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-lg">👤</span>
+                    )}
                   </div>
                 </Link>
               )}

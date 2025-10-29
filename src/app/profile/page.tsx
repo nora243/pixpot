@@ -8,6 +8,7 @@ import SecureImage from "@/components/SecureImage";
 import { isAdmin } from "@/lib/admin";
 import { PIXPOT_CONTRACT_ADDRESS, PIXPOT_CONTRACT_ABI } from "@/lib/contract";
 import { formatEther } from "viem";
+import sdk from "@farcaster/miniapp-sdk";
 
 type ProfileStats = {
   totalPixelsRevealed: number;
@@ -96,11 +97,10 @@ function Toast({ toast, onClose }: { toast: ToastMessage; onClose: () => void })
       <div className={`relative p-[3px] rounded-xl bg-linear-to-br ${bgColors[toast.type]} shadow-lg shadow-${toast.type === 'success' ? 'green' : toast.type === 'error' ? 'red' : 'blue'}-500/30 min-w-[320px]`}>
         <div className="rounded-[11px] bg-zinc-900 p-4">
           <div className="flex items-start gap-3">
-            <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-              toast.type === 'success' ? 'bg-green-500' :
-              toast.type === 'error' ? 'bg-red-500' :
-              'bg-blue-500'
-            }`}>
+            <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${toast.type === 'success' ? 'bg-green-500' :
+                toast.type === 'error' ? 'bg-red-500' :
+                  'bg-blue-500'
+              }`}>
               {icons[toast.type]}
             </div>
             <div className="flex-1">
@@ -146,11 +146,11 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
 
       if (data.prizes && Array.isArray(data.prizes)) {
         const prizesWithStatus: UnclaimedPrize[] = [];
-        
+
         for (const prize of data.prizes) {
           try {
             const gameId = BigInt(prize.onchain_game_id);
-            
+
             // Get game info from contract
             const game = await publicClient.readContract({
               address: PIXPOT_CONTRACT_ADDRESS,
@@ -237,12 +237,12 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
         title: "Prize Claimed!",
         message: `You received ${prize.winnerAmount} ETH. Congratulations! 🎉`
       });
-      
+
       // Reload prizes after 2 seconds
       setTimeout(() => loadPrizes(), 2000);
     } catch (error: any) {
       console.error("Error claiming prize:", error);
-      
+
       let errorMessage = "Unknown error occurred";
       if (error.message?.includes("User rejected")) {
         errorMessage = "Transaction was rejected";
@@ -277,7 +277,7 @@ function UnclaimedPrizesTab({ address }: { address: string | undefined }) {
   return (
     <>
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
-      
+
       <div className="space-y-6">
         {/* Unclaimed Prizes */}
         {unclaimedPrizes.length > 0 && (
@@ -426,7 +426,7 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
 
       if (data.participatedImages && Array.isArray(data.participatedImages)) {
         const revealerPrizes: RevealerPrize[] = [];
-        
+
         for (const img of data.participatedImages) {
           // Only check completed games with onchain_game_id
           if (img.status !== 'completed' || !img.onchain_game_id) {
@@ -435,12 +435,12 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
 
           try {
             const gameId = BigInt(img.onchain_game_id);
-            
+
             // Check if user is the winner (winners can't claim revealer prizes)
             if (img.winner_address && img.winner_address.toLowerCase() === address.toLowerCase()) {
               continue;
             }
-            
+
             // Get user's contribution from blockchain (don't rely on database user_pixels)
             const contribution = await publicClient.readContract({
               address: PIXPOT_CONTRACT_ADDRESS,
@@ -564,11 +564,11 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
         title: "Prize Claimed!",
         message: `You received ${prize.revealerAmount} ETH for revealing pixels! 🎉`
       });
-      
+
       setTimeout(() => loadRevealerPrizes(), 2000);
     } catch (error: any) {
       console.error("Error claiming revealer prize:", error);
-      
+
       let errorMessage = "Unknown error occurred";
       if (error.message?.includes("User rejected")) {
         errorMessage = "Transaction was rejected";
@@ -604,7 +604,7 @@ function RevealerPrizesTab({ address }: { address: string | undefined }) {
   return (
     <>
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
-      
+
       <div className="space-y-6">
         {/* Unclaimed Revealer Prizes */}
         {unclaimedPrizes.length > 0 && (
@@ -783,6 +783,8 @@ export default function ProfilePage() {
   const [participatedImages, setParticipatedImages] = useState<ParticipatedImage[]>([]);
   const [recentGuesses, setRecentGuesses] = useState<RecentGuess[]>([]);
   const [activeTab, setActiveTab] = useState<"prizes" | "revealers" | "images" | "guesses">("prizes");
+  const [user, setUser] = useState<any>(null);
+  const [isInMiniApp, setIsInMiniApp] = useState(false);
 
   useEffect(() => {
     if (address && publicClient) {
@@ -790,9 +792,29 @@ export default function ProfilePage() {
     }
   }, [address, publicClient]);
 
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        // Check if we're in a Mini App
+        const miniAppStatus = await sdk.isInMiniApp();
+        setIsInMiniApp(miniAppStatus);
+
+        if (miniAppStatus) {
+          // Get context and extract user info
+          const context = await sdk.context;
+          setUser(context.user);
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
   async function loadProfile() {
     if (!address || !publicClient || !PIXPOT_CONTRACT_ADDRESS) return;
-    
+
     setLoading(true);
     try {
       // Load off-chain data from database
@@ -805,7 +827,7 @@ export default function ProfilePage() {
         // Calculate on-chain stats
         const wonGames = await fetch(`/api/claim-prize?address=${address}`);
         const wonData = await wonGames.json();
-        
+
         let totalWon = BigInt(0);
         let totalClaimed = BigInt(0);
         let gamesWon = 0;
@@ -814,7 +836,7 @@ export default function ProfilePage() {
           for (const prize of wonData.prizes) {
             try {
               const gameId = BigInt(prize.onchain_game_id);
-              
+
               // Get prize info from contract
               const gamePrize = await publicClient.readContract({
                 address: PIXPOT_CONTRACT_ADDRESS,
@@ -864,8 +886,8 @@ export default function ProfilePage() {
       <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 text-zinc-50">
         {/* Animated pixel grid background */}
         <div className="absolute inset-0 opacity-20">
-          <div 
-            className="absolute inset-0" 
+          <div
+            className="absolute inset-0"
             style={{
               backgroundImage: `
                 linear-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px),
@@ -876,11 +898,11 @@ export default function ProfilePage() {
             }}
           />
         </div>
-        
+
         {/* Gradient orbs */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        
+
         <div className="relative z-10">
           <header className="border-b border-white/10 backdrop-blur-sm bg-black/20">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
@@ -889,7 +911,7 @@ export default function ProfilePage() {
                 <span className="text-base sm:text-lg font-bold bg-linear-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">PixPot</span>
               </Link>
               <div className="scale-90 sm:scale-100 origin-right">
-                <ConnectButton />
+                <ConnectButton accountStatus="avatar" />
               </div>
             </div>
           </header>
@@ -902,7 +924,7 @@ export default function ProfilePage() {
                   <p className="text-zinc-400 mb-6">
                     Please connect your wallet to view your profile
                   </p>
-                  <ConnectButton />
+                  <ConnectButton accountStatus="avatar" />
                 </div>
               </div>
             </div>
@@ -916,8 +938,8 @@ export default function ProfilePage() {
     <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 text-zinc-50">
       {/* Animated pixel grid background */}
       <div className="absolute inset-0 opacity-20">
-        <div 
-          className="absolute inset-0" 
+        <div
+          className="absolute inset-0"
           style={{
             backgroundImage: `
               linear-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px),
@@ -928,12 +950,12 @@ export default function ProfilePage() {
           }}
         />
       </div>
-      
+
       {/* Gradient orbs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-      
+
       <div className="relative z-10">
         <header className="border-b border-white/10 backdrop-blur-sm bg-black/20">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
@@ -942,30 +964,67 @@ export default function ProfilePage() {
               <span className="text-base sm:text-lg font-bold bg-linear-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">PixPot</span>
             </Link>
             <div className="scale-90 sm:scale-100 origin-right">
-              <ConnectButton />
+              <ConnectButton accountStatus="avatar" />
             </div>
           </div>
         </header>
 
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           {/* Header */}
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold mb-2">Your Profile</h1>
-              <p className="text-sm text-zinc-400 font-mono">
-                {address?.slice(0, 10)}...{address?.slice(-8)}
-              </p>
-            </div>
-            {isAdmin(address) && (
-              <Link 
-                href="/admin"
-                className="group relative overflow-hidden rounded-lg bg-linear-to-r from-blue-500/90 via-cyan-400/90 to-blue-600/90 p-0.5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/40"
-              >
-                <div className="relative rounded-md bg-black/80 backdrop-blur-sm px-4 py-2 transition-all">
-                  <span className="text-sm font-semibold text-white">⚙️ Admin Panel</span>
+          <div className="mb-8">
+            {/* Farcaster Profile Section */}
+            {isInMiniApp && user && (
+              <div className="relative p-[3px] rounded-xl bg-linear-to-br from-purple-500 via-pink-400 to-purple-600 shadow-lg shadow-purple-500/30 mb-6">
+                <div className="rounded-[11px] bg-zinc-900 p-6">
+                  <div className="flex items-center gap-4">
+                    {user.pfpUrl ? (
+                      <img
+                        src={user.pfpUrl}
+                        alt={user.displayName || user.username}
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-full ring-4 ring-purple-400/30"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl font-bold ring-4 ring-purple-400/30">
+                        {user.displayName?.[0] || user.username?.[0] || 'F'}
+                      </div>
+                    )}
+
+                    <div className="flex-1">
+                      {user.displayName && (
+                        <h2 className="text-xl sm:text-2xl font-bold mb-1">{user.displayName}</h2>
+                      )}
+                      <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <span className="text-purple-400 font-medium">@{user.username || `fid:${user.fid}`}</span>
+                        <span className="text-zinc-500">•</span>
+                        <span className="text-zinc-400">FID: {user.fid}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </Link>
+              </div>
             )}
+
+            {/* Wallet Info and Admin Button */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                  {isInMiniApp && user ? 'Game Stats' : 'Your Profile'}
+                </h1>
+                <p className="text-sm text-zinc-400 font-mono">
+                  {address?.slice(0, 10)}...{address?.slice(-8)}
+                </p>
+              </div>
+              {isAdmin(address) && (
+                <Link
+                  href="/admin"
+                  className="group relative overflow-hidden rounded-lg bg-linear-to-r from-blue-500/90 via-cyan-400/90 to-blue-600/90 p-0.5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/40"
+                >
+                  <div className="relative rounded-md bg-black/80 backdrop-blur-sm px-4 py-2 transition-all">
+                    <span className="text-sm font-semibold text-white">⚙️ Admin Panel</span>
+                  </div>
+                </Link>
+              )}
+            </div>
           </div>
 
           {loading ? (
@@ -1037,41 +1096,37 @@ export default function ProfilePage() {
                 <div className="flex gap-2 border-b border-white/10">
                   <button
                     onClick={() => setActiveTab("prizes")}
-                    className={`px-4 py-2 font-medium transition-colors ${
-                      activeTab === "prizes"
+                    className={`px-4 py-2 font-medium transition-colors ${activeTab === "prizes"
                         ? "text-cyan-400 border-b-2 border-cyan-400"
                         : "text-zinc-400 hover:text-zinc-200"
-                    }`}
+                      }`}
                   >
                     🏆 Winner Prizes
                   </button>
                   <button
                     onClick={() => setActiveTab("revealers")}
-                    className={`px-4 py-2 font-medium transition-colors ${
-                      activeTab === "revealers"
+                    className={`px-4 py-2 font-medium transition-colors ${activeTab === "revealers"
                         ? "text-cyan-400 border-b-2 border-cyan-400"
                         : "text-zinc-400 hover:text-zinc-200"
-                    }`}
+                      }`}
                   >
                     💎 Revealer Prizes
                   </button>
                   <button
                     onClick={() => setActiveTab("images")}
-                    className={`px-4 py-2 font-medium transition-colors ${
-                      activeTab === "images"
+                    className={`px-4 py-2 font-medium transition-colors ${activeTab === "images"
                         ? "text-cyan-400 border-b-2 border-cyan-400"
                         : "text-zinc-400 hover:text-zinc-200"
-                    }`}
+                      }`}
                   >
                     Participated Images ({participatedImages.length})
                   </button>
                   <button
                     onClick={() => setActiveTab("guesses")}
-                    className={`px-4 py-2 font-medium transition-colors ${
-                      activeTab === "guesses"
+                    className={`px-4 py-2 font-medium transition-colors ${activeTab === "guesses"
                         ? "text-cyan-400 border-b-2 border-cyan-400"
                         : "text-zinc-400 hover:text-zinc-200"
-                    }`}
+                      }`}
                   >
                     Recent Guesses ({recentGuesses.length})
                   </button>
@@ -1110,9 +1165,9 @@ export default function ProfilePage() {
                               <span className="text-zinc-400">Status: </span>
                               <span className={
                                 img.status === 'completed' ? 'text-green-400' :
-                                img.status === 'active' ? 'text-blue-400' :
-                                img.status === 'suspended' ? 'text-orange-400' :
-                                'text-zinc-400'
+                                  img.status === 'active' ? 'text-blue-400' :
+                                    img.status === 'suspended' ? 'text-orange-400' :
+                                      'text-zinc-400'
                               }>
                                 {img.status}
                               </span>
@@ -1156,11 +1211,10 @@ export default function ProfilePage() {
                         {recentGuesses.map((guess, idx) => (
                           <div
                             key={idx}
-                            className={`flex items-center justify-between p-3 rounded transition-colors ${
-                              guess.is_correct
+                            className={`flex items-center justify-between p-3 rounded transition-colors ${guess.is_correct
                                 ? "bg-green-100 dark:bg-green-900/20 border border-green-400/20"
                                 : "bg-zinc-800"
-                            }`}
+                              }`}
                           >
                             <div className="flex-1">
                               <div className="font-medium text-sm">
