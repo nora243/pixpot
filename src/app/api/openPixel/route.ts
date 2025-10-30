@@ -25,7 +25,10 @@ export async function POST(request: Request) {
     const connectorName = body?.connectorName; // Connector type (e.g., 'Base Account')
 
     // Check if using Base Account for simplified validation
-    const isBaseAccount = connectorName === 'Base Account';
+    const isBaseAccount = connectorName && (
+      connectorName.toLowerCase().includes('base') || 
+      connectorName.toLowerCase().includes('farcaster')
+    );
 
     if (!Number.isInteger(index) || index < 0 || index >= GRID_SIZE * GRID_SIZE) {
       return new Response(JSON.stringify({ success: false, error: "invalid index" }), {
