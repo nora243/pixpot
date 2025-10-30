@@ -25,7 +25,7 @@ type NotificationState = {
 } | null;
 
 export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGameDataChange }: Props) {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const publicClient = usePublicClient();
   
@@ -477,6 +477,7 @@ export default function PixelCanvas({ onRevealedCountChange, onHintsChange, onGa
           index, 
           walletAddress: address,
           txHash: tx, // Include transaction hash for verification
+          connectorName: connector?.name, // 🔵 Include connector type for validation logic
         }),
       });
 

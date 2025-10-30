@@ -37,7 +37,7 @@ export async function GET() {
             "heroImageUrl": "https://pixpot.fun/logo.png",
             "tagline": "Play instantly",
             "ogTitle": "PixPot Mini App",
-            "ogDescription": "Challenge friends in real time.",
+            "ogDescription": "Reveal pixels in real time.",
             "ogImageUrl": "https://pixpot.fun/logo.png",
             "noindex": false
         }

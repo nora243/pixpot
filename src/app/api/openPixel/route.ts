@@ -22,6 +22,10 @@ export async function POST(request: Request) {
     const index = Number(body?.index);
     const walletAddress = body?.walletAddress;
     const txHash = body?.txHash; // Transaction hash from onchain reveal
+    const connectorName = body?.connectorName; // Connector type (e.g., 'Base Account')
+
+    // Check if using Base Account for simplified validation
+    const isBaseAccount = connectorName === 'Base Account';
 
     if (!Number.isInteger(index) || index < 0 || index >= GRID_SIZE * GRID_SIZE) {
       return new Response(JSON.stringify({ success: false, error: "invalid index" }), {
@@ -45,7 +49,7 @@ export async function POST(request: Request) {
         timeout: 20_000, // 20 seconds timeout
       });
 
-      // Check transaction succeeded
+      // ✅ REQUIRED FOR ALL: Check transaction succeeded
       if (receipt.status !== 'success') {
         return new Response(JSON.stringify({ 
           success: false, 
@@ -56,96 +60,43 @@ export async function POST(request: Request) {
         });
       }
 
-      // Verify transaction was sent to correct contract
-      if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: "Transaction was not sent to PixPot contract" 
-        }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
+      // 🔵 SKIP for Base Account: Additional security checks
+      if (!isBaseAccount) {
+        // Verify transaction was sent to correct contract
+        if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Transaction was not sent to PixPot contract" 
+          }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        // Verify caller matches walletAddress
+        if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Transaction sender does not match wallet address" 
+          }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        // Verify the transaction called revealPixels function
+        const txData = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
+        
+        if (!txData.input || txData.input === '0x') {
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Transaction did not call any contract function" 
+          }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
       }
-
-      //Verify caller matches walletAddress
-      if (walletAddress && receipt.from.toLowerCase() !== walletAddress.toLowerCase()) {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: "Transaction sender does not match wallet address" 
-        }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-
-      // Verify the transaction called revealPixels function
-      const txData = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
-      
-      if (!txData.input || txData.input === '0x') {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: "Transaction did not call any contract function" 
-        }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-
-      // Get function selector from transaction input (first 4 bytes = 8 hex chars + '0x')
-      // const functionSelector = txData.input.slice(0, 10);
-      
-      // Calculate expected function selector for revealPixels(uint256,uint256)
-      // revealPixels function signature
-      // const revealPixelsAbi = PIXPOT_CONTRACT_ABI.find(
-      //   (item: any) => item.type === 'function' && item.name === 'revealPixels'
-      // );
-      
-      // if (!revealPixelsAbi) {
-      //   return new Response(JSON.stringify({ 
-      //     success: false, 
-      //     error: "Contract ABI not configured correctly" 
-      //   }), {
-      //     status: 500,
-      //     headers: { "Content-Type": "application/json" },
-      //   });
-      // }
-
-      // The function selector should match revealPixels(uint256,uint256)
-      // Expected selector: 0x9e9e4f3a (this is keccak256("revealPixels(uint256,uint256)")[:4])
-      // We'll verify by decoding the transaction input
-      // const expectedFunctionName = 'revealPixels';
-      
-      // Simple check: function selector should be consistent
-      // For stronger validation, decode the parameters
-      // try {
-      //   const { decodeFunctionData } = await import('viem');
-      //   const decoded = decodeFunctionData({
-      //     abi: PIXPOT_CONTRACT_ABI,
-      //     data: txData.input as `0x${string}`,
-      //   });
-
-      //   // Verify it's the revealPixels function
-      //   if (decoded.functionName !== expectedFunctionName) {
-      //     return new Response(JSON.stringify({ 
-      //       success: false, 
-      //       error: "Transaction did not call revealPixels function",
-      //       details: `Function called: ${decoded.functionName}`
-      //     }), {
-      //       status: 400,
-      //       headers: { "Content-Type": "application/json" },
-      //     });
-      //   }
-      // } catch (decodeError) {
-      //   console.error("Error decoding transaction:", decodeError);
-      //   return new Response(JSON.stringify({ 
-      //     success: false, 
-      //     error: "Failed to decode transaction data",
-      //     details: "Transaction may not be a valid revealPixels call"
-      //   }), {
-      //     status: 400,
-      //     headers: { "Content-Type": "application/json" },
-      //   });
-      // }
 
     } catch (verifyError: any) {
       console.error("Transaction verification error:", verifyError);
@@ -172,7 +123,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // Check if this txHash has already been used
+    // ✅ REQUIRED FOR ALL: Check if this txHash has already been used
     const existingTx = await query<any[]>(
       `SELECT pixel_index, image_id FROM revealed_pixels WHERE tx_hash = ?`,
       [txHash]
@@ -182,7 +133,8 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ 
         success: false, 
         error: "This transaction has already been used to reveal a pixel",
-        details: `Transaction ${txHash} was already used for pixel ${existingTx[0].pixel_index}`
+        details: `Transaction ${txHash} was already used for pixel ${existingTx[0].pixel_index}`,
+        isBaseAccount, // Include connector info for debugging
       }), {
         status: 409, // Conflict
         headers: { "Content-Type": "application/json" },
