@@ -24,10 +24,10 @@ export async function POST(request: Request) {
     const txHash = body?.txHash; // Transaction hash from onchain reveal
     const connectorName = body?.connectorName; // Connector type (e.g., 'Base Account')
 
-    // Check if using Base Account for simplified validation
-    const isBaseAccount = connectorName && (
-      connectorName.toLowerCase().includes('base') || 
-      connectorName.toLowerCase().includes('farcaster')
+    // Check if using Smart Account for simplified validation
+    const isSmartAccount = connectorName && (
+      connectorName.toLowerCase().includes('smart') ||
+      connectorName.toLowerCase().includes('account')
     );
 
     if (!Number.isInteger(index) || index < 0 || index >= GRID_SIZE * GRID_SIZE) {
@@ -63,8 +63,8 @@ export async function POST(request: Request) {
         });
       }
 
-      // 🔵 SKIP for Base Account: Additional security checks
-      if (!isBaseAccount) {
+      // 🔵 SKIP for Smart Account: Additional security checks
+      if (!isSmartAccount) {
         // Verify transaction was sent to correct contract
         if (receipt.to?.toLowerCase() !== PIXPOT_CONTRACT_ADDRESS?.toLowerCase()) {
           return new Response(JSON.stringify({ 
@@ -137,7 +137,7 @@ export async function POST(request: Request) {
         success: false, 
         error: "This transaction has already been used to reveal a pixel",
         details: `Transaction ${txHash} was already used for pixel ${existingTx[0].pixel_index}`,
-        isBaseAccount, // Include connector info for debugging
+        isSmartAccount, // Include connector info for debugging
       }), {
         status: 409, // Conflict
         headers: { "Content-Type": "application/json" },
